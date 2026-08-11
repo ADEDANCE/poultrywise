@@ -1,13 +1,17 @@
+import CTA from "../Section/CTA";
 import Features from "../Section/Features";
 import Hero from "../Section/Hero";
+import HowItWork from "../Section/HowItWork";
 import Problem from "../Section/Problem";
 
 function Landingpage() {
   return (
-    <div>
+    <div className=" bg-gray-300 w-full ">
       <Hero />
       <Problem />
-      <Features  />
+      <Features />
+      <HowItWork />
+      <CTA />
     </div>
   );
 }
