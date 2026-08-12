@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <nav className=" w-full mx-auto bg-white  py-2 px-3 shadow text-black">
       <div className="">
@@ -32,8 +34,18 @@ function Navbar() {
           </div>
 
           <div className=" hidden lg:flex gap-4">
-            <Button className=" border border-gray-300 shadow">Log In</Button>
-            <Button className=" bg-green-800 ">Get Started</Button>
+            <Button
+              className=" border border-gray-300 shadow"
+              onClick={() => navigate("/login")}
+            >
+              Log In
+            </Button>
+            <Button
+              className=" bg-green-800 "
+              onClick={() => navigate("/signup")}
+            >
+              Get Started
+            </Button>
           </div>
         </div>
 
@@ -70,10 +82,16 @@ function Navbar() {
               Benefits
             </a>
 
-            <Button className=" text-green-800 bg-white  border border-gray-300 shadow w-full">
+            <Button
+              className=" text-green-800 bg-white  border border-gray-300 shadow w-full"
+              onClick={() => navigate("/login")}
+            >
               Log In
             </Button>
-            <Button className=" bg-green-800 w-full text-white ">
+            <Button
+              className=" bg-green-800 w-full text-white "
+              onClick={() => navigate("/signup")}
+            >
               Get Started
             </Button>
           </div>
