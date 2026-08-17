@@ -1,64 +1,155 @@
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import type { SubmitEvent } from "react";
+import { registerUser } from "../services/authService";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const Signup = () => {
   const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const registrationData = {
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
+  };
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  // Controls the loading popup
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: SubmitEvent) => {
+    e.preventDefault();
+
+    setMessage("");
+    setError("");
+    // Start loading
+    setIsLoading(true);
+
+    try {
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match");
+        return;
+      }
+      const response = await registerUser(registrationData);
+
+      setMessage(response.message);
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      navigate("/setupflock");
+    } catch (error: any) {
+      console.log("Registration error:", error);
+      console.log("Server response:", error.response?.data);
+
+      setError(error.response?.data?.message || "Registration failed");
+    } finally {
+      // Stop loading whether request succeeds or fails
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <section className=" w-full px-20 md:px-40 py-16">
-      <div className=" text-center">
-        <h1 className=" font-bold text-2xl mb-6">PoultryWise</h1>
+    <>
+      {isLoading && <LoadingOverlay message="  Creating your account" />}
+      <section className=" w-full px-10 md:px-40 py-16">
+        <div className=" text-center">
+          <h1 className=" font-bold text-2xl mb-6">PoultryWise</h1>
 
-        <div className=" border border-gray-200 bg-white shadow px-4 py-6 rounded-xl text-center">
-          <h2 className=" font-semibold">Create your account</h2>
-          <p>Start managing your layer flock today.</p>
+          <div className=" border border-gray-200 bg-white shadow px-4 py-6 rounded-xl text-center">
+            <h2 className=" font-semibold">Create your account</h2>
+            <p>Start managing your layer flock today.</p>
 
-          <div className=" flex flex-col gap-3">
-            <Input
-              label="FullName"
-              className=""
-              placeholder="e.g Ballo Basit"
-            />
+            {message && <p className=" text-green-600">{message}</p>}
 
-            <Input label="Email Address" placeholder="you@example.com" />
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Create a Strong Password"
-              passwordToggle
-            />
-            <Input
-              label="Confirm Password"
-              type="password"
-              placeholder="Repeat your Password"
-              passwordToggle
-            />
-          </div>
-          <p className=" text-xs mt-4">
-            By creating an account you agree to our
-            <a href=" " className=" underline text-green-700">
-              Terms of Service
-            </a>{" "}
-            and {}
-            <a href="" className=" underline text-green-700">
-              Privacy Policy
+            {error && <p className=" text-red-500">{error}</p>}
+
+            <form onSubmit={handleSubmit}>
+              <div className=" flex flex-col gap-3">
+                <Input
+                  label="FullName"
+                  name="name"
+                  placeholder="e.g Ballo Basit"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+
+                <Input
+                  label="Email Address"
+                  name="email"
+                  placeholder="you@example.com"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder="Create a Strong Password"
+                  passwordToggle
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Repeat your Password"
+                  passwordToggle
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+              <p className=" text-xs mt-4">
+                By creating an account you agree to our
+                <a href=" " className=" underline text-green-700">
+                  Terms of Service
+                </a>{" "}
+                and {}
+                <a href="" className=" underline text-green-700">
+                  Privacy Policy
+                </a>
+              </p>
+
+              <Button
+                type="submit"
+                className=" text-white bg-green-800 mt-3"
+                // onClick={() => navigate("/setupflock")}
+              >
+                Create Account
+              </Button>
+            </form>
+
+            <p>Already have an account?</p>
+            <a href="" className=" text-green-800">
+              Login
             </a>
-          </p>
-
-          <Button
-            className=" text-white bg-green-800 mt-3"
-            onClick={() => navigate("/setupflock")}
-          >
-            Create Account
-          </Button>
-
-          <p>Already have an account?</p>
-          <a href="" className=" text-green-800">
-            Login
-          </a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
