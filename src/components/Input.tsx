@@ -14,6 +14,9 @@ function Input({
   className = "",
   passwordToggle = false,
   type,
+  name,
+  value,
+  onChange,
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +31,10 @@ function Input({
 
       <div className="relative">
         <input
+          name={name}
           type={inputType}
+          value={value}
+          onChange={onChange}
           className={`w-full rounded-xl border border-gray-300 px-4 py-3 pr-12 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100 ${className}`}
           {...props}
         />
