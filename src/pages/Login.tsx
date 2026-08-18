@@ -5,6 +5,7 @@ import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
 import type { SubmitEvent } from "react";
+import { getActiveFlock } from "../services/flockService";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -42,8 +43,6 @@ const Login = () => {
     try {
       const response = await loginUser(loginData);
 
-      response.token;
-
       localStorage.setItem("token", response.token);
 
       setMessage(response.message);
@@ -53,7 +52,16 @@ const Login = () => {
         password: "",
       });
 
-      navigate("/setupflock");
+      try {
+        await getActiveFlock();
+        navigate("/dashboard");
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          navigate("/setupflock");
+        } else {
+          setError("Unable to check your flock");
+        }
+      }
     } catch (error: any) {
       setError(error.response?.data?.message || "Login failed");
     } finally {
