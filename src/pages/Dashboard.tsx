@@ -2,8 +2,55 @@ import { FaPlus } from "react-icons/fa";
 import Button from "../components/Button";
 import DashboardCard from "../components/DashboardCard";
 import { LuBird } from "react-icons/lu";
+import { useState, useEffect } from "react";
+import type { Flock } from "../types/flock";
+import { getActiveFlock } from "../services/flockService";
+import { getDashboardSummary } from "../services/dashboardService";
+import type { DashboardSummary } from "../services/dashboardService";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const Dashboard = () => {
+  const [flock, setFlock] = useState<Flock | null>(null);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const [flockData, summaryData] = await Promise.all([
+          getActiveFlock(),
+          getDashboardSummary(),
+        ]);
+
+        setFlock(flockData);
+        setSummary(summaryData);
+      } catch (error: any) {
+        console.error("Failed to load dashboard:", error);
+
+        setError(
+          error.response?.data?.message || "Failed to load your dashboard",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingOverlay message="Loading your flock" />;
+  }
+
+  if (error) {
+    return (
+      <section className="flex min-h-screen items-center justify-center">
+        <p className="text-red-500">{error}</p>
+      </section>
+    );
+  }
+
   return (
     <section className=" w-full px-8 py-7 bg-gray-200">
       <div className=" text-center">
@@ -11,8 +58,8 @@ const Dashboard = () => {
           <p className=" text-gray-300 font-bold text-xl">Current Flock</p>
 
           <div className=" flex justify-between w-full">
-            <p className=" text-3xl">
-              Batch 001 · <span> Day 145</span>
+            <p className="text-3xl">
+              {flock?.batchID} . <span>Day {summary?.birdAgeDays ?? 0}</span>
             </p>
 
             <Button className=" hidden md:block bg-orange-500 text-white">
@@ -24,7 +71,7 @@ const Dashboard = () => {
           </div>
 
           <p>
-            Stage: <span>Egg Production</span>
+            Stage: <span>{flock?.currentStage}</span>
           </p>
 
           <Button className=" mt-3 md:hidden w-full bg-orange-500 text-white ">
@@ -39,15 +86,15 @@ const Dashboard = () => {
           <DashboardCard
             title="Current Birds"
             icon={<LuBird />}
-            value="492"
-            description="8 deaths total"
+            value={`${summary?.birdsAlive ?? 0}`}
+            description={`${summary?.totalMortality ?? 0} deaths total`}
           />
           <DashboardCard
             title="Flock Age
 "
             icon={<LuBird />}
-            value="Day 145"
-            description="Started 4 Mar 2026"
+            value={`Day ${summary?.birdAgeDays ?? 0}`}
+            description={`${summary?.birdAgeWeeks ?? 0} weeks old`}
           />
         </div>
 
@@ -55,14 +102,14 @@ const Dashboard = () => {
           <DashboardCard
             title="Total Expenses"
             icon={<LuBird />}
-            value="492"
-            description="8 deaths total"
+            value={`₦${summary?.totalExpenses?.toLocaleString() ?? "0"}`}
+            description={`${summary?.status}`}
           />
           <DashboardCard
             title="Total Revenue"
             icon={<LuBird />}
-            value="492"
-            description="8 deaths total"
+            value={`₦${summary?.totalRevenue?.toLocaleString() ?? "0"}`}
+            description={summary?.status ?? "No records"}
           />
         </div>
 
@@ -71,44 +118,51 @@ const Dashboard = () => {
           <p className=" text-gray-600">
             Cumulative across the full flock cycle.{" "}
           </p>
-          <p className=" text-gray-600 font-bold  my-3">EXPENSES</p>
 
           <div className=" flex justify-between border-b border-gray-400">
             <p className=" text-gray-400">Initial Chicks</p>
-            <p>500,000</p>
+            <p>₦{flock?.initialCost?.toLocaleString() ?? "0"}</p>
           </div>
 
           <div className=" flex justify-between border-b border-gray-400">
             <p className=" text-gray-400">Feed</p>
-            <p>200,000</p>
+            <p>
+              ₦{summary?.financialBreakdown?.feedCost?.toLocaleString() ?? "0"}
+            </p>
           </div>
           <div className=" flex justify-between border-b border-gray-400">
             <p className=" text-gray-400">Drugs</p>
-            <p>20,000</p>
+            <p>
+              ₦
+              {summary?.financialBreakdown?.medicationCost?.toLocaleString() ??
+                "0"}
+            </p>
           </div>
           <div className=" flex justify-between border-b border-gray-400">
             <p className=" text-gray-400">Vacination</p>
-            <p>30,000</p>
+            <p>
+              ₦
+              {summary?.financialBreakdown?.vaccinationCost?.toLocaleString() ??
+                "0"}
+            </p>
           </div>
 
           <div className=" flex justify-between border-b border-gray-400">
             <p className=" text-gray-400">Egg sold</p>
-            <p>1,000,000</p>
-          </div>
-
-          <div className=" flex justify-between border-b border-gray-400">
-            <p className=" text-gray-400">Vacination</p>
-            <p>6,000</p>
+            <p>
+              ₦
+              {summary?.financialBreakdown?.eggRevenue?.toLocaleString() ?? "0"}
+            </p>
           </div>
 
           <div className=" flex justify-between border-b border-gray-400 ">
             <p className=" text-gray-400">Total Revenue</p>
-            <p>1,000,000</p>
+            <p>₦{summary?.totalRevenue?.toLocaleString() ?? "0"}</p>
           </div>
 
           <div className=" flex justify-between  ">
             <p className=" text-gray-400">ROI</p>
-            <p>300,000</p>
+            <p>{summary?.roi ?? 0}%</p>
           </div>
         </div>
       </div>
