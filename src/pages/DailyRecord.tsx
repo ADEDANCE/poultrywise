@@ -2,8 +2,12 @@ import { FaEgg, FaRegCalendarAlt } from "react-icons/fa";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { IoMdCheckmark } from "react-icons/io";
+import { useState } from "react";
 
 const DailyRecord = () => {
+  const [usedVaccine, setUsedVaccine] = useState(false);
+  const [usedDrug, setUsedDrug] = useState(false);
+
   return (
     <section className=" w-full px-10 md:px-40 py-16">
       <div className=" text-center">
@@ -31,7 +35,6 @@ const DailyRecord = () => {
               label="Notes (optional)"
               placeholder="Any observations about the flock today..."
             />
-            <Input label="Initial Chick Cost" placeholder="e.g 1250" />
           </div>
         </div>
 
@@ -41,8 +44,8 @@ const DailyRecord = () => {
           <h2 className=" font-semibold">Feed Information</h2>
 
           <div className=" mt-4 flex gap-6">
-            <Input label="Birds Today" placeholder="e.g 492" />
-            <Input label="Deaths Today" placeholder="e.g 0" />
+            <Input label="Feed Quantity (kg)" placeholder="e.g 492" />
+            <Input label="Feed Cost (GHS)" placeholder="e.g 0" />
           </div>
         </div>
 
@@ -53,16 +56,70 @@ const DailyRecord = () => {
           <p>Did you use a vaccine today?</p>
 
           <div className=" flex gap-6 mt-3">
-            <Button className=" bg-white border border-gray-300 w-full">
+            <Button
+              className=" bg-white border border-gray-300 w-full"
+              onClick={() => setUsedVaccine(true)}
+            >
               {" "}
               Yes
             </Button>
 
-            <Button className=" bg-green-800 text-white w-full"> No</Button>
+            <Button
+              className=" bg-green-800 text-white w-full"
+              onClick={() => setUsedVaccine(false)}
+            >
+              {" "}
+              No
+            </Button>
           </div>
 
-          <Input label="Vaccine Name" placeholder="e.g lasota" />
+          {usedVaccine && (
+            <>
+            <Input label="Vaccine Name" placeholder="e.g lasota" />
           <Input label="Vaccination Cost" placeholder="e.g 500" />
+            </>
+          )}
+
+          
+
+          
+        </div>
+
+
+        {/* Medcine */}
+         <div className=" border border-gray-200 bg-white shadow px-4 py-6 rounded-xl text-center mb-6">
+          <h2 className=" font-semibold">Vaccination</h2>
+
+          <p>Did you buy drug today?</p>
+
+          <div className=" flex gap-6 mt-3">
+            <Button
+              className=" bg-white border border-gray-300 w-full"
+              onClick={() => setUsedDrug(true)}
+            >
+              {" "}
+              Yes
+            </Button>
+
+            <Button
+              className=" bg-green-800 text-white w-full"
+              onClick={() => setUsedDrug(false)}
+            >
+              {" "}
+              No
+            </Button>
+          </div>
+
+          {usedDrug && (
+            <>
+            <Input label="Medcine Name" placeholder="e.g multivate" />
+          <Input label="Medcine Cost" placeholder="e.g 500" />
+            </>
+          )}
+
+          
+
+          
         </div>
 
         {/* Egg production */}
