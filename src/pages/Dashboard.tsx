@@ -8,8 +8,10 @@ import { getActiveFlock } from "../services/flockService";
 import { getDashboardSummary } from "../services/dashboardService";
 import type { DashboardSummary } from "../services/dashboardService";
 import LoadingOverlay from "../components/LoadingOverlay";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [flock, setFlock] = useState<Flock | null>(null);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [error, setError] = useState("");
@@ -18,10 +20,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const [flockData, summaryData] = await Promise.all([
-          getActiveFlock(),
-          getDashboardSummary(),
-        ]);
+        let flockData = null;
+
+        try {
+          flockData = await getActiveFlock();
+        } catch (error: any) {
+          // 404 simply means there is no active flock
+          if (error.response?.status !== 404) {
+            throw error;
+          }
+        }
+
+        const summaryData = flockData ? await getDashboardSummary() : null;
 
         setFlock(flockData);
         setSummary(summaryData);
@@ -54,35 +64,62 @@ const Dashboard = () => {
   return (
     <section className=" w-full px-8 py-7 bg-gray-200">
       <div className=" text-center">
-        <div className=" bg-green-800 text-white px-4 py-4 rounded-2xl flex flex-col items-start ">
-          <p className=" text-gray-300 font-bold text-xl">Current Flock</p>
+        {flock ? (
+          <div className="bg-green-800 text-white px-4 py-4 rounded-2xl flex flex-col items-start">
+            <p className="text-gray-300 font-bold text-xl">Current Flock</p>
 
-          <div className=" flex justify-between w-full">
-            <p className="text-3xl">
-              {flock?.batchID} . <span>Day {summary?.birdAgeDays ?? 0}</span>
+            <div className="flex justify-between w-full">
+              <p className="text-3xl">
+                {flock.batchID} . <span>Day {summary?.birdAgeDays ?? 0}</span>
+              </p>
+
+              <Button
+                className="hidden md:block bg-orange-500 text-white cursor-pointer"
+                onClick={() => navigate("/dailyrecord")}
+              >
+                <span className="flex gap-2 items-center justify-center">
+                  <FaPlus />
+                  <p>Add Today's Record</p>
+                </span>
+              </Button>
+            </div>
+
+            <p>
+              Stage: <span>{flock.currentStage}</span>
             </p>
 
-            <Button className=" hidden md:block bg-orange-500 text-white">
-              <span className=" flex gap-2 items-center justify-center">
+            <Button
+              className="mt-3 md:hidden w-full bg-orange-500 text-white cursor-pointer"
+              onClick={() => navigate("/dailyrecord")}
+            >
+              <span className="flex gap-2 items-center justify-center">
                 <FaPlus />
                 <p>Add Today's Record</p>
               </span>
             </Button>
           </div>
+        ) : (
+          <div className="bg-green-800 text-white px-4 py-6 rounded-2xl flex flex-col items-center text-center">
+            <p className="text-xl font-bold">No Active Flock</p>
 
-          <p>
-            Stage: <span>{flock?.currentStage}</span>
-          </p>
+            <p className="mt-2 text-gray-300">
+              You don't have an active flock. Create one to start tracking your
+              birds.
+            </p>
 
-          <Button className=" mt-3 md:hidden w-full bg-orange-500 text-white ">
-            <span className=" flex gap-2 items-center justify-center">
-              <FaPlus />
-              <p>Add Today's Record</p>
-            </span>
-          </Button>
-        </div>
+            <Button
+              className="mt-4 bg-orange-500 text-white cursor-pointer"
+              onClick={() => navigate("/setupflock")}
+            >
+              <span className="flex gap-2 items-center justify-center">
+                <FaPlus />
+                <p>Create New Flock</p>
+              </span>
+            </Button>
+          </div>
+        )}
 
-        <div className=" flex justify-between gap-10 mt-10 text-start">
+        <div className=" flex justify-between gap-7 mt-10 text-start">
           <DashboardCard
             title="Current Birds"
             icon={<LuBird />}
