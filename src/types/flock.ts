@@ -6,6 +6,7 @@ export interface FinalSummary {
   totalMortality: number;
   mortalityRate: number;
   finalBirdCount: number;
+  totalEggsProduced: number;
   totalEggsSold: number;
 }
 
@@ -24,4 +25,9 @@ export interface Flock {
   createdAt: string;
   updatedAt: string;
   finalSummary: FinalSummary;
+}
+
+export interface FlockHistoryResponse {
+  count: number;
+  flocks: Flock[];
 }

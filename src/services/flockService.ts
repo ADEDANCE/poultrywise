@@ -1,5 +1,5 @@
 import api from "./api";
-import type { Flock } from "../types/flock";
+import type { Flock, FlockHistoryResponse } from "../types/flock";
 
 export interface CreateFlockData {
   batchID: string;
@@ -20,4 +20,16 @@ export const getActiveFlock = async (): Promise<Flock> => {
   const response = await api.get("/api/flocks");
 
   return response.data.flock;
+};
+
+export const endFlock = async () => {
+  const response = await api.patch("/api/flocks/complete");
+
+  return response.data;
+};
+
+export const getFlockHistory = async (): Promise<FlockHistoryResponse> => {
+  const response = await api.get("/api/flocks/history");
+
+  return response.data;
 };
