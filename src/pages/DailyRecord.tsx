@@ -1,11 +1,11 @@
-import { FaEgg, FaRegCalendarAlt } from "react-icons/fa";
+import { FaEgg } from "react-icons/fa";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { IoMdCheckmark } from "react-icons/io";
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { createDailyRecord } from "../services/dailyRecordService";
-import type { DailyRecord, DailyRecordFormData } from "../types/dailyRecord";
+import type { DailyRecordFormData } from "../types/dailyRecord";
 import LoadingOverlay from "../components/LoadingOverlay";
 
 const DailyRecord = () => {
@@ -117,14 +117,7 @@ const DailyRecord = () => {
 
       <section className=" w-full px-10 md:px-40 py-16">
         <div className=" text-center">
-          <div className=" bg-green-100 rounded-xl px-3 py-3 flex gap-2">
-            <FaRegCalendarAlt />
-            <p>
-              Recording for{" "}
-              <span className=" font-bold">Sunday, 27 July 2026</span> ·{" "}
-              <span>Flock Day 145</span>
-            </p>
-          </div>
+          <h1 className=" text-black font-bold text-2xl">Daily Record</h1>
 
           {message && <p className="text-green-600 mb-4">{message}</p>}
 
