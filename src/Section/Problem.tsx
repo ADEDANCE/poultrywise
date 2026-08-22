@@ -2,7 +2,7 @@ import { FiX } from "react-icons/fi";
 
 const Problem = () => {
   return (
-    <section className=" bg-gray-300 w-full px-10 py-8">
+    <section id="benefits" className=" bg-gray-300 w-full px-10 py-8">
       <div className=" mx-auto text-black items-center text-center  lg:px-32">
         <h3 className=" font-bold">
           Running a poultry farm shouldn't feel like guessing.

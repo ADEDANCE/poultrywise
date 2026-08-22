@@ -4,7 +4,7 @@ import { FaChartLine, FaRegClock } from "react-icons/fa";
 
 const Features = () => {
   return (
-    <section className=" bg-gray-300 w-full px-10 py-8">
+    <section id="features" className=" bg-gray-300 w-full px-10 py-8">
       <div className=" mx-auto text-black items-center text-center  lg:px-32">
         <h3 className=" text-green-700">FEATURES</h3>
         <h2 className=" font-bold text-2xl">

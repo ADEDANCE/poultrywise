@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
   const navigate = useNavigate();
   return (
-    <nav className=" w-full mx-auto bg-white  py-2 px-3 shadow text-black">
+    <nav className="sticky top-0 z-5 w-full mx-auto bg-white  py-2 px-3 shadow text-black">
       <div className="">
         <div className=" hidden lg:flex items-center justify-between">
           <p className="font-bold">PoultryWise</p>
@@ -20,13 +23,13 @@ function Navbar() {
               Features
             </a>
             <a
-              href="/#pricing"
+              href="/#howitwork"
               className=" hover:bg-blue-200 hover:rounded-xl py-2 px-4"
             >
               How It works
             </a>
             <a
-              href="/#testimony"
+              href="/#benefits"
               className=" hover:bg-blue-200 hover:rounded-xl py-2 px-4 "
             >
               Benefits
@@ -35,13 +38,13 @@ function Navbar() {
 
           <div className=" hidden lg:flex gap-4">
             <Button
-              className=" border border-gray-300 shadow"
+              className=" border bg-green-800 text-white border-gray-300 shadow"
               onClick={() => navigate("/login")}
             >
               Log In
             </Button>
             <Button
-              className=" bg-green-800 "
+              className=" text-white bg-green-800 "
               onClick={() => navigate("/signup")}
             >
               Get Started
@@ -66,31 +69,40 @@ function Navbar() {
             <a
               href="/#features"
               className=" hover:bg-blue-200 hover:rounded-xl py-2 px-4"
+              onClick={closeMenu}
             >
               Features
             </a>
             <a
-              href="/#pricing"
+              href="/#howitwork"
               className=" hover:bg-blue-200 hover:rounded-xl py-2 px-4"
+              onClick={closeMenu}
             >
               How It works
             </a>
             <a
-              href="/#testimony"
+              href="/#Benefits"
               className=" hover:bg-blue-200 hover:rounded-xl py-2 px-4 "
+              onClick={closeMenu}
             >
               Benefits
             </a>
 
             <Button
               className=" text-green-800 bg-white  border border-gray-300 shadow w-full"
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                setIsOpen(false);
+                navigate("/login");
+              }}
             >
               Log In
             </Button>
             <Button
               className=" bg-green-800 w-full text-white "
-              onClick={() => navigate("/signup")}
+              onClick={() => {
+                setIsOpen(false);
+                navigate("/signup");
+              }}
             >
               Get Started
             </Button>
